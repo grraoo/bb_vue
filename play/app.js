@@ -7,35 +7,56 @@ new Vue({
   el: '#app',
   data() {
     return {
+      text: `text`,
+      columns:  [
+        [
+          ["data1",  ...[...Array(5)].map(n => Math.round(Math.random() * 100))],
+          ["data2", ...[...Array(5)].map(n => Math.round(Math.random() * 100))]
+        ],
+        [
+          ["data1",  ...[...Array(6)].map(n => Math.round(Math.random() * 100))],
+          ["data2", ...[...Array(6)].map(n => Math.round(Math.random() * 100))]
+        ],
+        [
+          ["data1",  ...[...Array(7)].map(n => Math.round(Math.random() * 100))],
+          ["data2", ...[...Array(7)].map(n => Math.round(Math.random() * 100))]
+        ]
+      ],
       chartData: {
         title: {
           text: 'sample chart'
         },
         data: {
-          columns: []
-        }
+          text: `test`,
+          onclick: this.show,
+          columns: [],
+          types: {
+            data1: "line",
+            data2: "area-spline"
+          },
+          colors: {
+            data1: "red",
+            data2: "green"
+          }
+      }
       },
+
     }
   },
   methods: {
-    randomize(length) {
-      const dataName = `data ${(this.chartData.data || {}).columns ? this.chartData.data.columns.length : 0}`;
-      const randomArray = [...Array(length)].map(n => Math.round(Math.random() * 100));
-      this.$set(this.chartData.data,'columns',[...this.chartData.data.columns, [dataName, ...randomArray]]);
+    changeData(id) {
+      this.chartData.data.columns = this.columns[id]
+    },
+    show(d) {
+      console.log(d)
+      this.text = `${d.name}: ${d.value}`;
+      console.log(this)
     },
   },
   template: `<div>
-    <button @click='randomize(12)'>12 option</button>
-    <button @click='randomize(4)'>4 option</button>
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
-    <billboard-chart :options = 'chartData' />
+    <button v-for="(data, i) in columns" :key="i" @click='changeData(i)'>{{i}}</button>
+
+    <billboard-chart :options='chartData'/>
+    <input v-model = "text"/>
     </div>`
   })
